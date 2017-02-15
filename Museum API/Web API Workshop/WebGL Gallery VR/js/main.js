@@ -39,24 +39,23 @@ function init(){
     camera.up = new THREE.Vector3(0,0,1);
     scene.add(camera);            
 
-        controls = new THREE.DeviceOrientationControls(camera, true);
+    //controls = new THREE.DeviceOrientationControls(camera, true);
 
     addRoom();
     addLights();
 
     // request first images
     getJSON(url,cooperHewittResponse);
+    setInterval( function() { getJSON(url,cooperHewittResponse); }, 5000 );
     
-
     // event listeners
     window.addEventListener( 'resize', onWindowResize, false );    
-    window.addEventListener('deviceorientation', setOrientationControls, true);
     document.addEventListener('keydown',onDocumentKeyDown,false);
 
     container.onclick = function() { fullscreen(); }
 
 }
-
+//--- KEYBOARD CONTROLS
 function onDocumentKeyDown(event){
     switch(event.keyCode){
         case 32: 
@@ -74,17 +73,14 @@ function onDocumentKeyDown(event){
         case 37:
             camera.rotation.y += Math.PI * .05;
             break;
-        case 86:
-            //v
-            useVR = !useVR;
-            break;
+        
     }
 }
 
 //--- MAIN LOOP
 function animate(){
 
- controls.update();
+ //controls.update();
   if(useVR) effect.render(scene, camera);
   else renderer.render(scene, camera);
   
@@ -200,18 +196,6 @@ function onWindowResize() {
 
 }
 
-//--------- DEVICE CONTROLS
-function setOrientationControls(e) {
-    if (!e.alpha) {
-      return;
-    }
-
-    controls = new THREE.DeviceOrientationControls(camera, true);
-    controls.connect();
-    controls.update();
-
-    window.removeEventListener('deviceorientation', setOrientationControls, true);
-}
 
 function fullscreen() {
     if (container.requestFullscreen) {

@@ -6,9 +6,8 @@ var totalLoaded = 0;
 var roomSize = 250;
 
 //--- GLOBALS
-var scene, camera, renderer, controls, effect, container, painting;
+var scene, camera, renderer, controls, container, painting;
 var paintings = [];
-var useVR = false;
 
 //--- START APP
 init();
@@ -22,8 +21,6 @@ function init(){
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.shadowMap.enabled = true;
     renderer.setClearColor( 0xffffff );
-
-    effect = new THREE.StereoEffect(renderer);
 
     container = document.getElementById( 'world' );
     container.appendChild( renderer.domElement );
@@ -49,14 +46,14 @@ function init(){
 
     // event listeners
     window.addEventListener( 'resize', onWindowResize, false );    
-    window.addEventListener('deviceorientation', setOrientationControls, true);
     document.addEventListener('keydown',onDocumentKeyDown,false);
-
-    //container.onclick = function() { fullscreen(); }
 
 }
 
 function onDocumentKeyDown(event){
+    
+    document.getElementById("info").style.visibility = "hidden";
+
     switch(event.keyCode){
         case 32: 
             getJSON(url,cooperHewittResponse);
@@ -84,8 +81,7 @@ function onDocumentKeyDown(event){
 function animate(){
 
   //controls.update();
-  if(useVR) effect.render(scene, camera);
-  else renderer.render(scene, camera);
+  renderer.render(scene, camera);
   
   requestAnimationFrame(animate);
   
@@ -197,34 +193,10 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
 
     renderer.setSize(width, height);
-    effect.setSize(width, height);
 
 }
 
-//--------- DEVICE CONTROLS
-function setOrientationControls(e) {
-    if (!e.alpha) {
-      return;
-    }
-
-    controls = new THREE.DeviceOrientationControls(camera, true);
-    controls.connect();
-    controls.update();
-
-    window.removeEventListener('deviceorientation', setOrientationControls, true);
-}
-
-function fullscreen() {
-    if (container.requestFullscreen) {
-        container.requestFullscreen();
-    } else if (container.msRequestFullscreen) {
-        container.msRequestFullscreen();
-    } else if (container.mozRequestFullScreen) {
-        container.mozRequestFullScreen();
-    } else if (container.webkitRequestFullscreen) {
-        container.webkitRequestFullscreen();
-    }
-}   
+ 
 
 //--------- API Functions
 function cooperHewittResponse(err,data){
